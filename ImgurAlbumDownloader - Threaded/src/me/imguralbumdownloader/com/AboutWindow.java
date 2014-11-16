@@ -28,10 +28,11 @@ public class AboutWindow extends JDialog {
 	 * Constructor
 	 */
 	public AboutWindow() {
+		setResizable(false);
 		//Set window attributes
 		setTitle("About");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(AboutWindow.class.getResource("/me/imguralbumdownloader/com/icon-imgur.png")));
-		setBounds(100, 100, 420, 130);
+		setBounds(100, 100, 420, 126);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -61,7 +62,7 @@ public class AboutWindow extends JDialog {
 								.addComponent(lblMadeByMicah)
 								.addComponent(lblThanksForTrying)))
 						.addGroup(gl_contentPanel.createSequentialGroup()
-							.addGap(141)
+							.addGap(142)
 							.addComponent(btnOk, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap(83, Short.MAX_VALUE))
 		);
@@ -72,9 +73,9 @@ public class AboutWindow extends JDialog {
 					.addComponent(lblMadeByMicah)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(lblThanksForTrying)
-					.addPreferredGap(ComponentPlacement.RELATED)
+					.addPreferredGap(ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
 					.addComponent(btnOk)
-					.addContainerGap(47, Short.MAX_VALUE))
+					.addContainerGap())
 		);
 		contentPanel.setLayout(gl_contentPanel);
 	}

@@ -33,11 +33,12 @@ public class HelpWindow extends JDialog {
 	 * Constructor
 	 */
 	public HelpWindow() {
+		setResizable(false);
 		//Set window attributes
 		setTitle("Help");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(HelpWindow.class.getResource("/me/imguralbumdownloader/com/icon-imgur.png")));
 		setModal(true);
-		setBounds(100, 100, 480, 271);
+		setBounds(100, 100, 488, 267);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -61,19 +62,19 @@ public class HelpWindow extends JDialog {
 		setLocationRelativeTo(null);
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
 		gl_contentPanel.setHorizontalGroup(
-			gl_contentPanel.createParallelGroup(Alignment.TRAILING)
+			gl_contentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPanel.createSequentialGroup()
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addContainerGap()
 					.addComponent(txtpnYouCanSet, GroupLayout.PREFERRED_SIZE, 442, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap())
-				.addGroup(Alignment.LEADING, gl_contentPanel.createSequentialGroup()
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+				.addGroup(gl_contentPanel.createSequentialGroup()
 					.addGap(174)
 					.addComponent(btnOk, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(188, Short.MAX_VALUE))
+					.addContainerGap(196, Short.MAX_VALUE))
 		);
 		gl_contentPanel.setVerticalGroup(
-			gl_contentPanel.createParallelGroup(Alignment.TRAILING)
-				.addGroup(Alignment.LEADING, gl_contentPanel.createSequentialGroup()
+			gl_contentPanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPanel.createSequentialGroup()
 					.addComponent(txtpnYouCanSet, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(btnOk)

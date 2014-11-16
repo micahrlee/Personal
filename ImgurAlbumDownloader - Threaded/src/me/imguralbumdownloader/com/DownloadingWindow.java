@@ -106,6 +106,7 @@ public class DownloadingWindow extends JFrame {
 		contentPane.setLayout(gl_contentPane);
 		//Activate the listeners
 		activateListeners();
+		pack();
 		//Start the download
 		new Thread(iad).start();
 	}

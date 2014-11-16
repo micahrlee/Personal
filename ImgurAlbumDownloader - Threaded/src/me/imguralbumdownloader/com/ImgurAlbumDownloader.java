@@ -71,15 +71,9 @@ public class ImgurAlbumDownloader implements Runnable {
 		//Reset parse for re-use
 		parser.reset();
 		//Store the title obtained from the parser
-		albumTitle = title.remove(0).toPlainTextString().trim();
+		albumTitle = title.remove(0).toPlainTextString().replaceAll(" - Imgur", "").trim();
 		//Set the path, and create a new folder named after the imgur album
-		this.path = pth + albumTitle + "\\";
-		//Test file to check if directory exists
-		File testFile = new File(path.substring(0, path.length() -1));
-		//If directory doesn't exist, then make it
-		if(!testFile.exists()){
-			testFile.mkdir();
-		}
+		this.path = pth + albumTitle + File.separator;
 		//Set the matching pattern
 		matchingPattern = pattern;
 		//Set the reference to the window responsible for this downloader
@@ -88,28 +82,50 @@ public class ImgurAlbumDownloader implements Runnable {
 		window.setDownloading("Now Downloading " + albumTitle);
 	}
 	
-	private void getImages(){
+	/**
+	 * getImages will obtain all the image sources and place them into imgSrcs
+	 * @return - whether or not any images were found
+	 */
+	private boolean getImages(){
+		//Create the list of 
 		NodeList images = null;
+		//Determine whether or not to continue with video files
 		boolean toBreak = false;
+		//Switch based on the matching pattern chosen
 		switch(matchingPattern){
+		//If looking for jpgs just set the break, and continue
 		case jpgs:
 			toBreak = true;
+		//If looking for pngs just set the break, and continue
 		case pngs:
 			toBreak = true;
+		//If looking for gifs just set the break, and continue
 		case gifs:
 			toBreak = true;
+		//If looking for all file types
 		case all:
+			//Obtain all the sources that match a html link tag
 			images = getSources("a");
+			//Add in all the sources
 			addSources(images, "href");
 			if(toBreak){
 				break;
 			}
+		//If looking only for webm
 		case webm:
+			//Obtain all the sources that match a html source tag
 			images = getSources("source");
+			//Add in all the sources
 			addSources(images, "src");
 		}
+		return !imgSrcs.isEmpty();
 	}
 	
+	/**
+	 * @param filter - String - the filter used when searching for a specific tag
+	 * getSources will obtain all the tag elements that match the filter
+	 * @return - NodeList - a list which contains all the elements found for the specific tag filter
+	 */
 	private NodeList getSources(String filter){
 		NodeList ret = null;
 		try {
@@ -155,67 +171,65 @@ public class ImgurAlbumDownloader implements Runnable {
 	 * downloadImages will take the sources from imgSrcs and attempt to download them using a File Output Stream
 	 */
 	private void downloadImages(){
-		//If imgSrcs is empty then there is nothing to download. Show user that no images of this type were found
-		if(imgSrcs.isEmpty()){
-			JOptionPane.showMessageDialog(null, "No images were found." , "", JOptionPane.INFORMATION_MESSAGE);
+		//Set the number of files to be downloaded for the progress bar
+		window.setFileCount(imgSrcs.size());
+		//Test file to check if directory exists
+		File testFile = new File(path.substring(0, path.length() -1));
+		//If directory doesn't exist, then make it
+		if(!testFile.exists()){
+			testFile.mkdir();
 		}
-		//If imgSrcs has sources then continue with the download
-		else{
-			//Set the number of files to be downloaded for the progress bar
-			window.setFileCount(imgSrcs.size());
+		//Loop through all the file sources
+		for (int i = 0; i < imgSrcs.size(); i++) {
+			//Increment the progress bar based on our counter used to loop
+			window.incrementProgress(i);
 			
-			//Loop through all the file sources
-			for (int i = 0; i < imgSrcs.size(); i++) {
-				//Increment the progress bar based on our counter used to loop
-				window.incrementProgress(i);
-				
-				//If the download hasn't been cancelled, continue the download
-				if(continueDownload){
-					//Create new URL based on the image file
-					URL img = null;
-					try {
-						img = new URL("http://" + imgSrcs.get(i));
-					} 
-					//If the URL failed to connect, then print error and end download. This will return to run() which will dispose of the window properly
-					catch (MalformedURLException e1) {
-						JOptionPane.showMessageDialog(null, "Invalid connection. Check the URL, or your internet connection.", "Error", JOptionPane.ERROR_MESSAGE);
-						e1.printStackTrace();
-						return;
-					}
-					
-					//Split the string to remove i.imgur.com, leaving just the file and file extension
-					String fileName = imgSrcs.get(i).split("i\\.imgur\\.com/")[1];
-					//Since we have obtained the file name, we can update the window to show which file is currently downloading
-					window.setFile("...\\" + albumTitle + "\\" + fileName);
-					//Create byte array to hold image
-					byte[] b = new byte[4096];
-					//Used to keep track of how much of the image has been read
-					int length;
-					try {
-						//Create the input stream based on the image
-						InputStream is = img.openStream();
-						//Create the output stream, which points to the designated path
-						//This will also create the new file based on the name of the file obtained from the website
-						FileOutputStream os = new FileOutputStream(path + fileName);
-						//While the image reads bytes into the byte array
-						while ((length = is.read(b)) != -1) {
-							//Write those bytes to the new file
-							os.write(b, 0, length);
-						}
-						//Close the streams when we're done to prevent unwanted connections
-						is.close();
-						os.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+			//If the download hasn't been cancelled, continue the download
+			if(continueDownload){
+				//Create new URL based on the image file
+				URL img = null;
+				try {
+					img = new URL("http://" + imgSrcs.get(i));
+				} 
+				//If the URL failed to connect, then print error and end download. This will return to run() which will dispose of the window properly
+				catch (MalformedURLException e1) {
+					JOptionPane.showMessageDialog(null, "Invalid connection. Check the URL, or your internet connection.", "Error", JOptionPane.ERROR_MESSAGE);
+					e1.printStackTrace();
+					return;
 				}
-				//If download has been cancelled, end the download. This will return to run, which will dispose of the window properly
-				else{
-					break;
+				
+				//Split the string to remove i.imgur.com, leaving just the file and file extension
+				String fileName = imgSrcs.get(i).split("i\\.imgur\\.com/")[1];
+				//Since we have obtained the file name, we can update the window to show which file is currently downloading
+				window.setFile("..." + File.separator + albumTitle + File.separator + fileName);
+				//Create byte array to hold image
+				byte[] b = new byte[4096];
+				//Used to keep track of how much of the image has been read
+				int length;
+				try {
+					//Create the input stream based on the image
+					InputStream is = img.openStream();
+					//Create the output stream, which points to the designated path
+					//This will also create the new file based on the name of the file obtained from the website
+					FileOutputStream os = new FileOutputStream(path + fileName);
+					//While the image reads bytes into the byte array
+					while ((length = is.read(b)) != -1) {
+						//Write those bytes to the new file
+						os.write(b, 0, length);
+					}
+					//Close the streams when we're done to prevent unwanted connections
+					is.close();
+					os.close();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
+			//If download has been cancelled, end the download. This will return to run, which will dispose of the window properly
+			else{
+				break;
+			}
 		}
-		//Show the window (this will only be noticable if the user has hidden the window)
+		//Show the window (this will only be noticeable if the user has hidden the window)
 		window.setVisible(true);
 		//After the window has been shown, show a window that this album has finished downloading. If they click Yes, the explorer will open up the path
 		try {
@@ -233,9 +247,21 @@ public class ImgurAlbumDownloader implements Runnable {
 	 */
 	public void run() {
 		//First get the images
-		getImages();
-		//Then download the images
-		downloadImages();
+		if(getImages()){
+			//Then download the images
+			downloadImages();
+		}
+		//If no images were found, then show error
+		else{
+			try {
+				NoImagesWindow dialog = new NoImagesWindow();
+				dialog.setModal(false);
+				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				dialog.setVisible(true);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		//Hide the window
 		window.setVisible(false);
 		//Disable the window so it will not show up when hidden windows are shown

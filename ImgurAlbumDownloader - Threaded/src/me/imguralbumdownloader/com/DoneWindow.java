@@ -1,10 +1,10 @@
 package me.imguralbumdownloader.com;
 
 import java.awt.BorderLayout;
-import java.awt.Desktop;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.GroupLayout;
@@ -14,10 +14,10 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 
 import javax.swing.LayoutStyle.ComponentPlacement;
+
 import java.awt.Toolkit;
 
 /**
@@ -55,9 +55,10 @@ public class DoneWindow extends JDialog {
 		yesButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					Desktop.getDesktop().open(new File(path));
+					if(!OSUtilities.openDir(path)){
+						JOptionPane.showMessageDialog(null, "Could not open directory", "Error", JOptionPane.ERROR_MESSAGE);
+					}
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				dispose();
@@ -102,5 +103,6 @@ public class DoneWindow extends JDialog {
 						.addComponent(noButton)))
 		);
 		contentPanel.setLayout(gl_contentPanel);
+		pack();
 	}
 }
