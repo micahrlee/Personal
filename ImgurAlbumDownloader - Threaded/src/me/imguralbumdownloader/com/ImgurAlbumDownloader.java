@@ -71,7 +71,7 @@ public class ImgurAlbumDownloader implements Runnable {
 		//Reset parse for re-use
 		parser.reset();
 		//Store the title obtained from the parser
-		albumTitle = title.remove(0).toPlainTextString().replaceAll(" - Imgur", "").trim();
+		albumTitle = title.remove(0).toPlainTextString().replaceAll(" - Album on Imgur", "").trim();
 		//Set the path, and create a new folder named after the imgur album
 		this.path = pth + albumTitle + File.separator;
 		//Set the matching pattern

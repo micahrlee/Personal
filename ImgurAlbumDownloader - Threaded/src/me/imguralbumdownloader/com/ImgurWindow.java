@@ -10,7 +10,6 @@ import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -105,7 +104,7 @@ public class ImgurWindow extends JFrame {
 		//Set window attributes
 		setTitle("Imgur Album Downloader");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(ImgurWindow.class.getResource("/me/imguralbumdownloader/com/icon-imgur.png")));
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 515, 148);
 		
 		//Set up and create the content for the pane
@@ -287,15 +286,15 @@ public class ImgurWindow extends JFrame {
 		});
 		
 		//If user tries to exit, first confirm to prevent any unwanted activity
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-		    	int confirmed = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit? \nAny opened windows will continue downloading.", "", JOptionPane.YES_NO_OPTION);
-			    if (confirmed == JOptionPane.YES_OPTION) {
-			    	setVisible(false);
-			    	dispose();
-			    }
-			}
-		});
+//		addWindowListener(new WindowAdapter() {
+//			public void windowClosing(WindowEvent e) {
+//		    	int confirmed = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit? \nAny opened windows will continue downloading.", "", JOptionPane.YES_NO_OPTION);
+//			    if (confirmed == JOptionPane.YES_OPTION) {
+//			    	setVisible(false);
+//			    	dispose();
+//			    }
+//			}
+//		});
 	}
 	
 	/**
